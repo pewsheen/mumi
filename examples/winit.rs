@@ -1,10 +1,11 @@
 use std::str::FromStr;
 
 use mumi::{
-  accelerator::{Accelerator, RawMods, SysMods},
+  accelerator::{Accelerator, AcceleratorId, RawMods, SysMods},
   global_shortcut::ShortcutManager,
   global_shortcut_event_receiver,
-  keyboard::KeyCode, GlobalShortcutEvent,
+  keyboard::KeyCode,
+  Event::GlobalShortcutEvent,
 };
 
 use winit::{
@@ -57,33 +58,30 @@ fn main() {
 
     if let Ok(event) = menu_channel.try_recv() {
       match event {
-        GlobalShortcutEvent { id: 42703 }  => {
-            println!("shortcut 1 pressed");
+        GlobalShortcutEvent(hotkey_id) if hotkey_id == shortcut_1.clone().id() => {
+          println!("Pressed `shortcut_1` -- unregister for future use");
+          // unregister key
+          hotkey_manager
+            .unregister(global_shortcut_1.clone())
+            .unwrap();
         }
-        // shortcut_1.clone().id() => {
-        //     println!("Pressed `shortcut_1` -- unregister for future use");
-        //     // unregister key
-        //     hotkey_manager
-        //       .unregister(global_shortcut_1.clone())
-        //       .unwrap();
-        //   },
-        //   Event::GlobalShortcutEvent(hotkey_id) if hotkey_id == shortcut_2.clone().id() => {
-        //     println!("Pressed on `shortcut_2`");
-        //   }
-        //   // you can match hotkey_id with accelerator_string only if you used `from_str`
-        //   // by example `shortcut_1` will NOT match AcceleratorId::new("SHIFT+UP") as it's
-        //   // been created with a struct and the ID is generated automatically
-        //   Event::GlobalShortcutEvent(hotkey_id)
-        //     if hotkey_id == AcceleratorId::new("COMMANDORCONTROL+SHIFT+3") =>
-        //   {
-        //     println!("Pressed on `shortcut_3`");
-        //   }
-        //   Event::GlobalShortcutEvent(hotkey_id) if hotkey_id == shortcut_4.clone().id() => {
-        //     println!("Pressed on `shortcut_4`");
-        //   }
-        //   Event::GlobalShortcutEvent(hotkey_id) => {
-        //     println!("hotkey_id {:?}", hotkey_id);
-        //   }
+        GlobalShortcutEvent(hotkey_id) if hotkey_id == shortcut_2.clone().id() => {
+          println!("Pressed on `shortcut_2`");
+        }
+        // you can match hotkey_id with accelerator_string only if you used `from_str`
+        // by example `shortcut_1` will NOT match AcceleratorId::new("SHIFT+UP") as it's
+        // been created with a struct and the ID is generated automatically
+        GlobalShortcutEvent(hotkey_id)
+          if hotkey_id == AcceleratorId::new("COMMANDORCONTROL+SHIFT+3") =>
+        {
+          println!("Pressed on `shortcut_3`");
+        }
+        GlobalShortcutEvent(hotkey_id) if hotkey_id == shortcut_4.clone().id() => {
+          println!("Pressed on `shortcut_4`");
+        }
+        GlobalShortcutEvent(hotkey_id) => {
+          println!("hotkey_id {:?}", hotkey_id);
+        }
         _ => {}
       }
     }

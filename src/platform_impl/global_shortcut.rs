@@ -1,8 +1,9 @@
-use std::os::raw::{c_int, c_void};
 use crate::{
   accelerator::{Accelerator, AcceleratorId},
   global_shortcut::{GlobalShortcut as RootGlobalShortcut, ShortcutManagerError},
+  Event::GlobalShortcutEvent,
 };
+use std::os::raw::{c_int, c_void};
 
 type KeyCallback = unsafe extern "C" fn(c_int, *mut c_void);
 #[derive(Debug, Clone)]
@@ -141,10 +142,9 @@ where
 }
 
 fn global_accelerator_handler(item_id: i32) {
-  println!("{}", item_id);
   let _ = crate::GLOBAL_SHORTCUT_CHANNEL
     .0
-    .send(crate::GlobalShortcutEvent{ id: item_id });
+    .send(GlobalShortcutEvent(AcceleratorId(item_id as u16)));
 }
 
 impl Drop for ShortcutManager {
