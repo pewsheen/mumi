@@ -1,0 +1,17 @@
+[package]
+name = "mumi"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+crossbeam-channel = "0.5"
+once_cell = "1.10"
+bitflags = "1"
+core-graphics = "0.22"
+
+[dev-dependencies]
+winit = { git = "https://github.com/rust-windowing/winit" }
+tao = { git = "https://github.com/tauri-apps/tao" }
+
+[build-dependencies]
+cc = "1"
