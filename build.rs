@@ -16,7 +16,7 @@ fn main() {
     if std::env::var("CARGO_CFG_TARGET_OS").map_or(false, |os| os == "macos") {
       println!("cargo:rustc-link-lib=framework=Carbon");
       cc::Build::new()
-        .file("src/platform_impl/carbon_hotkey/carbon_hotkey_binding.c")
+        .file("src/platform_impl/macos/carbon_hotkey/carbon_hotkey_binding.c")
         .compile("carbon_hotkey_binding.a");
     }
   }
